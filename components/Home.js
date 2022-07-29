@@ -39,8 +39,7 @@ export default class Home extends React.Component {
   isSetColour = (colour) => (this.state.appColour === colour ? styles.selected : '');
 
   render() {
-    const app_bg = require('./../assets/Background Image.png');
-    const user_icon = require('./../assets/icon.svg');
+    const app_bg = require('./../assets/bg.png');
 
     return (
       <View style={styles.container}>
@@ -116,15 +115,15 @@ const styles = StyleSheet.create({
 
   header_text: {
     fontSize: 32,
-    fontWeight: '6000',
+    fontWeight: '600',
     color: '#fff',
-    fontFamily: 'Poppins-Black',
+    // fontFamily: 'Poppins-Black',
   },
   regular_text: {
     fontSize: 16,
     fontWeight: '400',
     color: '#757083',
-    fontFamily: 'Poppins-Regular',
+    // fontFamily: 'Poppins-Regular',
   },
 
   app_header_section: {
@@ -150,17 +149,17 @@ const styles = StyleSheet.create({
     width: '100%',
     borderColor: '#777082',
     backgroundColor: '#fff',
-    fontSize: '16px',
-    fontWeight: 300,
+    fontSize: 16,
+    fontWeight: '300',
     color: '#757083',
     borderWidth: 1,
-    fontFamily: 'Poppins-Regular',
-    padding: '10px',
-    paddingLeft: '20px',
+    // fontFamily: 'Poppins-Regular',
+    padding: 10,
+    paddingLeft: 20,
   },
   icon: {
-    marginLeft: '20px',
-    marginTop: '25px',
+    marginLeft: 20,
+    marginTop: 25,
   },
 
   colorEl: {
@@ -168,23 +167,23 @@ const styles = StyleSheet.create({
   },
 
   colour_option_shape_cover: {
-    height: '50px',
-    width: '50px',
+    height: 50,
+    width: 50,
     borderRadius: '50%',
-    marginTop: '5px',
-    marginRight: '5px',
+    marginTop: 5,
+    marginRight: 5,
     borderColor: '#777082',
-    padding: '5px',
+    padding: 5,
   },
 
   selected: {
-    borderWidth: '2px',
-    padding: '3px',
+    borderWidth: 2,
+    padding: 3,
   },
 
   colour_option_shape: {
-    height: '40px',
-    width: '40px',
+    height: 40,
+    width: 40,
     borderRadius: '50%',
   },
   colour_options1: {
