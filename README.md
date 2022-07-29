@@ -40,6 +40,14 @@ A mobile chat app built using React Native. It provide users with a chat interfa
 
 ## **Installation**
 
+### Prerequesites
+
+- Node.js and npm
+- Android Studio or Xcode for iOS
+- Expo
+
+<br>
+
 1. Clone repo
 
 ```bash
