@@ -10,7 +10,7 @@ export default class Home extends React.Component {
     this.state = {
       username: '',
       fontsLoaded: false,
-      appColor: '#090C08', // set default app colour
+      appColour: '#090C08', // set default app colour
     };
   }
 
@@ -26,6 +26,15 @@ export default class Home extends React.Component {
   componentDidMount() {
     this.loadFonts(); // load fonts on component load
   }
+
+  appColours = {
+    colour1: '#090C08',
+    colour2: '#474056',
+    colour3: '#8A95A5',
+    colour4: '#B9C6AE',
+  };
+
+  isSetColour = (colour) => (this.state.appColour === colour ? styles.selected : '');
 
   render() {
     const app_bg = require('./../assets/Background Image.png');
@@ -53,23 +62,23 @@ export default class Home extends React.Component {
               <Text style={styles.regular_text}>Choose Background Colour:</Text>
               <View style={styles.colorEl}>
                 <TouchableOpacity
-                  onPress={() => this.setState({ appColor: '#090C08' })}
-                  style={[styles.colour_option_shape_cover, this.state.appColor === '#090C08' ? styles.selected : '']}>
+                  onPress={() => this.setState({ appColour: this.appColours['colour1'] })}
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour1'])]}>
                   <View style={[styles.colour_option_shape, styles.colour_options1]}></View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.setState({ appColor: '#474056' })}
-                  style={[styles.colour_option_shape_cover, this.state.appColor === '#474056' ? styles.selected : '']}>
+                  onPress={() => this.setState({ appColour: this.appColours['colour2'] })}
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour2'])]}>
                   <View style={[styles.colour_option_shape, styles.colour_options2]}></View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.setState({ appColor: '#8A95A5' })}
-                  style={[styles.colour_option_shape_cover, this.state.appColor === '#8A95A5' ? styles.selected : '']}>
+                  onPress={() => this.setState({ appColour: this.appColours['colour3'] })}
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour3'])]}>
                   <View style={[styles.colour_option_shape, styles.colour_options3]}></View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.setState({ appColor: '#B9C6AE' })}
-                  style={[styles.colour_option_shape_cover, this.state.appColor === '#B9C6AE' ? styles.selected : '']}>
+                  onPress={() => this.setState({ appColour: this.appColours['colour4'] })}
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour4'])]}>
                   <View style={[styles.colour_option_shape, styles.colour_options4]}></View>
                 </TouchableOpacity>
               </View>
@@ -78,7 +87,10 @@ export default class Home extends React.Component {
             <Pressable
               style={styles.start_button}
               onPress={() =>
-                this.props.navigation.navigate('Chat', { username: this.state.username, appcolor: this.state.appColor })
+                this.props.navigation.navigate('Chat', {
+                  username: this.state.username,
+                  appcolor: this.state.appColour,
+                })
               }>
               <Text style={styles.start_button_text}>Start Chatting</Text>
             </Pressable>

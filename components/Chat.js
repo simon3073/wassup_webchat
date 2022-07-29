@@ -23,8 +23,10 @@ export default class Chat extends React.Component {
               this.props.route.params.appcolor === '#090C08' || this.props.route.params.appcolor === '#474056'
                 ? '#FFF'
                 : '#000',
+            fontSize: '20px',
+            fontFamily: 'Poppins-Regular',
           }}>
-          Hey {this.props.route.params.username}... Welcome to Wassup!
+          Hey {this.props.route.params.username} ...Welcome to Wassup!
         </Text>
       </View>
     );

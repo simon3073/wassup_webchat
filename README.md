@@ -48,20 +48,24 @@ A mobile chat app built using React Native. It provide users with a chat interfa
 
 <br>
 
+### Getting Started
+
 1. Clone repo
 
 ```bash
 git clone https://github.com/simon3073/wassup_webchat.git
 ```
 
-2. Edit homepage in package.json to connected github repo
-3. Run app locally
+2.  Navigate to root folder via CLI
+3.  Install required packages in package.json
+4.  Run app locally
 
 ```bash
 expo start
 ```
 
-4. Deploy on GitHub Pages
+4. Select an option to view (Web, iOS/Android Emulator, or QR Code to use on Expo App)
+5. Deploy on GitHub Pages
 
 ```bash
 npm run deploy
