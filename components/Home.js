@@ -27,6 +27,7 @@ export default class Home extends React.Component {
     this.loadFonts(); // load fonts on component load
   }
 
+  // Set up the colours for the app to choose from (helps readability)
   appColours = {
     colour1: '#090C08',
     colour2: '#474056',
@@ -34,6 +35,7 @@ export default class Home extends React.Component {
     colour4: '#B9C6AE',
   };
 
+  // function to check if colour is currently set -- for display purposes
   isSetColour = (colour) => (this.state.appColour === colour ? styles.selected : '');
 
   render() {
