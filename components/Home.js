@@ -10,10 +10,11 @@ export default class Home extends React.Component {
     this.state = {
       username: '',
       fontsLoaded: false,
-      appColor: '#090C08',
+      appColor: '#090C08', // set default app colour
     };
   }
 
+  // load Poppins from the assets/fonts folder
   async loadFonts() {
     await Font.loadAsync({
       'Poppins-Black': require('./../assets/fonts/Poppins-Black.ttf'),
@@ -22,15 +23,10 @@ export default class Home extends React.Component {
     this.setState({ fontsLoaded: true });
   }
 
-  isStateColor = (color) => {
-    return this.state.appColor === color ? styles.selected : '';
-  };
-
   componentDidMount() {
-    this.loadFonts();
+    this.loadFonts(); // load fonts on component load
   }
 
-  // Welcome text and Text Input to prompt user to enter a name and go to the chat
   render() {
     const app_bg = require('./../assets/Background Image.png');
     const user_icon = require('./../assets/icon.svg');
@@ -43,6 +39,7 @@ export default class Home extends React.Component {
           </View>
 
           <View style={styles.call_to_action}>
+            {/* Welcome text and Text Input to prompt user to enter a name and go to the chat */}
             <TextInput
               style={styles.textInput}
               left={<TextInput.Icon name="account-outline" style={styles.icon} size={35} color={'#75708280'} />}
@@ -51,6 +48,7 @@ export default class Home extends React.Component {
               placeholder="Your Name"
               placeholderTextColor={'#75708280'}
             />
+            {/* Ask user to select the theme colour */}
             <View>
               <Text style={styles.regular_text}>Choose Background Colour:</Text>
               <View style={styles.colorEl}>
@@ -76,7 +74,7 @@ export default class Home extends React.Component {
                 </TouchableOpacity>
               </View>
             </View>
-
+            {/* Send user to the chat page */}
             <Pressable
               style={styles.start_button}
               onPress={() =>
@@ -134,7 +132,7 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
-    height: 55,
+    height: 40,
     width: '100%',
     borderColor: '#777082',
     backgroundColor: '#fff',
