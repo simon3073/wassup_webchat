@@ -1,17 +1,17 @@
-import React from 'react';
-import { StyleSheet, View, Text, ImageBackground, Pressable } from 'react-native';
-import * as Font from 'expo-font';
-import { TextInput } from 'react-native-paper';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React from 'react'
+import { StyleSheet, View, Text, ImageBackground, Pressable } from 'react-native'
+import * as Font from 'expo-font'
+import { TextInput } from 'react-native-paper'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default class Home extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       username: '',
       fontsLoaded: false,
       appColour: '#090C08', // set default app colour
-    };
+    }
   }
 
   // load Poppins from the assets/fonts folder
@@ -19,27 +19,28 @@ export default class Home extends React.Component {
     await Font.loadAsync({
       'Poppins-Black': require('./../assets/fonts/Poppins-Black.ttf'),
       'Poppins-Regular': require('./../assets/fonts/Poppins-Regular.ttf'),
-    });
-    this.setState({ fontsLoaded: true });
+    })
+    this.setState({ fontsLoaded: true })
   }
 
   componentDidMount() {
-    this.loadFonts(); // load fonts on component load
+    this.loadFonts() // load fonts on component load
   }
 
   // Set up the colours for the app to choose from (helps readability)
+  // Background Colour, System Message Colour, App Message Colour, User Message Colour
   appColours = {
-    colour1: '#090C08',
-    colour2: '#474056',
-    colour3: '#8A95A5',
-    colour4: '#B9C6AE',
-  };
+    colour1: ['#090C08', '#d2d2d2', '#0092ff'],
+    colour2: ['#474056', '#d2d2d2', '#0092ff'],
+    colour3: ['#8A95A5', '#000', '#00FF'],
+    colour4: ['#B9C6AE', '#000', '#00FF'],
+  }
 
   // function to check if colour is currently set -- for display purposes
-  isSetColour = (colour) => (this.state.appColour === colour ? styles.selected : '');
+  isSetColour = colour => (this.state.appColour === colour ? styles.selected : '')
 
   render() {
-    const app_bg = require('./../assets/bg.png');
+    const app_bg = require('./../assets/bg.png')
 
     return (
       <View style={styles.container}>
@@ -52,10 +53,10 @@ export default class Home extends React.Component {
             {/* Welcome text and Text Input to prompt user to enter a name and go to the chat */}
             <TextInput
               style={styles.textInput}
-              left={<TextInput.Icon name="account-outline" style={styles.icon} size={35} color={'#75708280'} />}
-              onChangeText={(username) => this.setState({ username })}
+              left={<TextInput.Icon name='account-outline' style={styles.icon} size={35} color={'#75708280'} />}
+              onChangeText={username => this.setState({ username })}
               value={this.state.username}
-              placeholder="Your Name"
+              placeholder='Your Name'
               placeholderTextColor={'#75708280'}
             />
             {/* Ask user to select the theme colour */}
@@ -64,22 +65,26 @@ export default class Home extends React.Component {
               <View style={styles.colorEl}>
                 <TouchableOpacity
                   onPress={() => this.setState({ appColour: this.appColours['colour1'] })}
-                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour1'])]}>
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour1'])]}
+                >
                   <View style={[styles.colour_option_shape, styles.colour_options1]}></View>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => this.setState({ appColour: this.appColours['colour2'] })}
-                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour2'])]}>
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour2'])]}
+                >
                   <View style={[styles.colour_option_shape, styles.colour_options2]}></View>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => this.setState({ appColour: this.appColours['colour3'] })}
-                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour3'])]}>
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour3'])]}
+                >
                   <View style={[styles.colour_option_shape, styles.colour_options3]}></View>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => this.setState({ appColour: this.appColours['colour4'] })}
-                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour4'])]}>
+                  style={[styles.colour_option_shape_cover, this.isSetColour(this.appColours['colour4'])]}
+                >
                   <View style={[styles.colour_option_shape, styles.colour_options4]}></View>
                 </TouchableOpacity>
               </View>
@@ -92,13 +97,14 @@ export default class Home extends React.Component {
                   username: this.state.username,
                   appcolor: this.state.appColour,
                 })
-              }>
+              }
+            >
               <Text style={styles.start_button_text}>Start Chatting</Text>
             </Pressable>
           </View>
         </ImageBackground>
       </View>
-    );
+    )
   }
 }
 
@@ -211,4 +217,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-});
+})
