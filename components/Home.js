@@ -1,50 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, ImageBackground, Pressable } from 'react-native'
-import * as Font from 'expo-font'
+import React, { useState } from 'react'
+import { StyleSheet, View, Text, Image, Pressable } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
-// Set up the colours for the app to choose from (helps readability)
-// Background Colour, System Message Colour, App Message Colour, User Message Colour
-const appColours = {
-  colour1: ['#090C08', '#d2d2d2', '#0092ff'],
-  colour2: ['#474056', '#d2d2d2', '#0092ff'],
-  colour3: ['#8A95A5', '#000', '#00FF'],
-  colour4: ['#B9C6AE', '#000', '#00FF'],
-}
-const app_bg = require('./../assets/bg.png')
+// load our assets
+const wassup_logo = require('./../assets/images/wassup_logo.png')
+import SVGBackground from './backgrounds/SVGbackground'
 
 const Home = props => {
   const { uid } = props
   const [username, setUsername] = useState('')
-  const [fontsLoaded, setFontsLoaded] = useState(false)
-  const [appColour, setAppColour] = useState(appColours['colour1'])
+  const [appBG, setAppBG] = useState('SVGChat1') // << set up our initial BG state value
 
-  // load Poppins from the assets/fonts folder
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      'Poppins-Black': require('./../assets/fonts/Poppins-Black.ttf'),
-      'Poppins-Regular': require('./../assets/fonts/Poppins-Regular.ttf'),
-    })
-    setFontsLoaded(true)
-  }
-
-  useEffect(() => {
-    loadFonts()
-  }, [])
-
-  // function to check if colour is currently set -- for display purposes
-  const isSetColour = colour => (appColour[0] === colour[0] ? styles.selected : '')
+  // function to check if bg is currently set -- for display purposes of BG selector
+  const isSetBG = bg => (appBG === bg ? styles.selected : '')
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={app_bg} style={styles.image}>
-        <View style={styles.app_header_section}>
-          <Text style={styles.header_text}>Wassup!?!</Text>
-        </View>
+      <SVGBackground style={styles.bgimage} />
+      <View style={styles.app_header_section}>
+        <Image source={wassup_logo} style={styles.logo} />
+      </View>
 
-        <View style={styles.call_to_action}>
-          {/* Welcome text and Text Input to prompt user to enter a name and go to the chat */}
+      <View style={styles.call_to_action}>
+        {/* Welcome text and Text Input to prompt user to enter a name and go to the chat */}
+        <View style={{ width: '100%' }}>
+          <Text style={styles.regular_text}>Type in your chat name</Text>
           <TextInput
             style={styles.textInput}
             left={<TextInput.Icon name='account-outline' style={styles.icon} size={35} color={'#75708280'} />}
@@ -53,51 +34,53 @@ const Home = props => {
             placeholder='Your Name'
             placeholderTextColor={'#75708280'}
           />
-          {/* Ask user to select the theme colour */}
-          <View>
-            <Text style={styles.regular_text}>Choose Background Colour:</Text>
-            <View style={styles.colorEl}>
+
+          {/* Ask user to select the chat background */}
+          <View style={styles.userInput}>
+            <Text style={styles.regular_text}>Choose your background style</Text>
+            <View style={styles.backgroundEl}>
               <TouchableOpacity
-                onPress={() => setAppColour(appColours['colour1'])}
-                style={[styles.colour_option_shape_cover, isSetColour(appColours['colour1'])]}
+                onPress={() => setAppBG('SVGChat1')}
+                style={[styles.colour_option_shape_cover, isSetBG('SVGChat1')]}
               >
-                <View style={[styles.colour_option_shape, styles.colour_options1]}></View>
+                <Image source={require('./../assets/images/SVGChat1.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setAppColour(appColours['colour2'])}
-                style={[styles.colour_option_shape_cover, isSetColour(appColours['colour2'])]}
+                onPress={() => setAppBG('SVGChat2')}
+                style={[styles.colour_option_shape_cover, isSetBG('SVGChat2')]}
               >
-                <View style={[styles.colour_option_shape, styles.colour_options2]}></View>
+                <Image source={require('./../assets/images/SVGChat2.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setAppColour(appColours['colour3'])}
-                style={[styles.colour_option_shape_cover, isSetColour(appColours['colour3'])]}
+                onPress={() => setAppBG('SVGChat3')}
+                style={[styles.colour_option_shape_cover, isSetBG('SVGChat3')]}
               >
-                <View style={[styles.colour_option_shape, styles.colour_options3]}></View>
+                <Image source={require('./../assets/images/SVGChat3.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setAppColour(appColours['colour4'])}
-                style={[styles.colour_option_shape_cover, isSetColour(appColours['colour4'])]}
+                onPress={() => setAppBG('SVGChat4')}
+                style={[styles.colour_option_shape_cover, isSetBG('SVGChat4')]}
               >
-                <View style={[styles.colour_option_shape, styles.colour_options4]}></View>
+                <Image source={require('./../assets/images/SVGChat4.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
             </View>
           </View>
-          {/* Send user to the chat page */}
-          <Pressable
-            style={styles.start_button}
-            onPress={() =>
-              props.navigation.navigate('Chat', {
-                username: username,
-                appcolor: appColour,
-                userid: uid,
-              })
-            }
-          >
-            <Text style={styles.start_button_text}>Start Chatting</Text>
-          </Pressable>
         </View>
-      </ImageBackground>
+
+        {/* Send user to the chat page and pass username, userid and background style */}
+        <Pressable
+          style={styles.start_button}
+          onPress={() =>
+            props.navigation.navigate('Chat', {
+              username: username,
+              appBG: appBG,
+              userid: uid,
+            })
+          }
+        >
+          <Text style={styles.start_button_text}>START CHATTING</Text>
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -109,44 +92,48 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-    alignContent: 'center',
+  bgimage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  logo: {
+    width: 306,
+    height: 165,
+    marginTop: 100,
   },
 
-  header_text: {
-    fontSize: 32,
-    fontWeight: '600',
-    color: '#fff',
-    // fontFamily: 'Poppins-Black',
-  },
   regular_text: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: '#757083',
-    // fontFamily: 'Poppins-Regular',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000',
+    textAlign: 'center',
+    // fontFamily: 'Poppins_400Regular',
   },
 
   app_header_section: {
-    flex: 0.56,
+    flex: 0.6,
     justifyContent: 'top',
     top: 100,
     alignItems: 'center',
   },
 
   call_to_action: {
-    flex: 0.44,
-    width: '88%',
-    backgroundColor: 'white',
+    flex: 0.6,
+    width: '100%',
     justifyContent: 'space-between',
-    padding: '6%',
+    padding: '8%',
     alignItems: 'left',
-    borderRadius: 5,
-    margin: '6%',
+    borderRadius: 35,
+  },
+
+  userInput: {
+    width: '100%',
+    marginTop: 30,
   },
 
   textInput: {
+    marginTop: 15,
     height: 40,
     width: '100%',
     borderColor: '#777082',
@@ -155,23 +142,23 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: '#757083',
     borderWidth: 1,
-    // fontFamily: 'Poppins-Regular',
     padding: 10,
-    paddingLeft: 20,
   },
   icon: {
     marginLeft: 20,
     marginTop: 25,
   },
 
-  colorEl: {
+  backgroundEl: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 5,
   },
 
   colour_option_shape_cover: {
-    height: 50,
-    width: 50,
-    borderRadius: '50%',
+    height: 70,
+    width: 70,
+    borderRadius: '10%',
     marginTop: 5,
     marginRight: 5,
     borderColor: '#777082',
@@ -179,14 +166,14 @@ const styles = StyleSheet.create({
   },
 
   selected: {
-    borderWidth: 2,
-    padding: 3,
+    backgroundColor: '#0082af',
+    padding: 5,
   },
 
   colour_option_shape: {
-    height: 40,
-    width: 40,
-    borderRadius: '50%',
+    height: 60,
+    width: 60,
+    borderRadius: 10,
   },
   colour_options1: {
     backgroundColor: '#090C08',
@@ -204,7 +191,8 @@ const styles = StyleSheet.create({
   start_button: {
     width: '100%',
     height: 55,
-    backgroundColor: '#757083',
+    backgroundColor: '#0082af',
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -212,5 +200,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    // fontFamily: 'Poppins_400Regular',
   },
 })
