@@ -1,16 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { storageGet } from './Storage'
 
 // load our assets
 const wassup_logo = require('./../assets/images/wassup_logo.png')
 import SVGBackground from './backgrounds/SVGbackground'
 
 const Home = props => {
-  const { uid } = props
+  const { uid, online } = props
   const [username, setUsername] = useState('')
-  const [appBG, setAppBG] = useState('SVGChat1') // << set up our initial BG state value
+  const [appBG, setAppBG] = useState('') // << set up our initial BG state value
+
+  useEffect(() => {
+    // retrieve user data from local storage
+    const fetchUserData = async () => {
+      let usernameStored = await storageGet('username')
+      setUsername(usernameStored)
+      let appBGStored = await storageGet('appBG')
+      setAppBG(appBGStored === '' ? 'SVGChat1' : appBGStored)
+    }
+    fetchUserData()
+  }, [])
 
   // function to check if bg is currently set -- for display purposes of BG selector
   const isSetBG = bg => (appBG === bg ? styles.selected : '')
@@ -67,7 +79,16 @@ const Home = props => {
           </View>
         </View>
 
-        {/* Send user to the chat page and pass username, userid and background style */}
+        {/* Offline notification */}
+        {!online && (
+          <View style={{ alignItems: 'center', width: '100%' }}>
+            <Text style={{ color: 'darkred', fontWeight: 'bold', fontSize: 18, fontStyle: 'italic' }}>
+              You are currently offline
+            </Text>
+          </View>
+        )}
+
+        {/* Send user to the chat page and pass username, userid, background style and online status */}
         <Pressable
           style={styles.start_button}
           onPress={() =>
@@ -75,10 +96,12 @@ const Home = props => {
               username: username,
               appBG: appBG,
               userid: uid,
+              online: online,
             })
           }
         >
-          <Text style={styles.start_button_text}>START CHATTING</Text>
+          {/* Customise button text for offline message */}
+          <Text style={styles.start_button_text}>{online ? 'START CHATTING' : 'Get Chat History'}</Text>
         </Pressable>
       </View>
     </View>

@@ -5,6 +5,7 @@ import LottieView from 'lottie-react-native'
 import 'react-native-gesture-handler'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import NetInfo from '@react-native-community/netinfo'
 
 // Import access to the database
 import firebase from './database/firebaseDB'
@@ -19,9 +20,21 @@ import SVGBackground from './components/backgrounds/SVGbackground'
 const Stack = createStackNavigator()
 
 const WassupApp = () => {
-  const [uid, setUid] = useState('') // set uid as the state to determine loading vis
-  useEffect(() => {
-    // authorise our use on initial visit
+  const [uid, setUid] = useState('') // set uid as the state to determine loading visibility
+
+  // set isConnected as the state so as to decide whether to
+  // authorise user and to pass to the other screens
+  const [isConnected, setIsConnected] = useState(null)
+
+  // function to return online status
+  const onlineStatus = () => {
+    NetInfo.fetch().then(state => {
+      return state.isConnected
+    })
+  }
+
+  // authorise user function
+  const authUser = () => {
     const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
       try {
         if (!user) {
@@ -35,6 +48,14 @@ const WassupApp = () => {
     return () => {
       authUnsubscribe()
     }
+  }
+
+  useEffect(() => {
+    // Check our user online status on load > run authorisation if so, setUid ton dummy value to load pages otherwise
+    NetInfo.fetch().then(state => {
+      setIsConnected(state.isConnected)
+      !state.isConnected ? authUser() : setUid(1)
+    })
   }, [])
 
   return !uid ? (
@@ -49,7 +70,7 @@ const WassupApp = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
         <Stack.Screen name='Home' options={{ headerShown: false }}>
-          {props => <Home {...props} uid={uid} />}
+          {props => <Home {...props} uid={uid} online={isConnected} />}
         </Stack.Screen>
         <Stack.Screen name='Chat' component={Chat} />
       </Stack.Navigator>
