@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Image, Pressable } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import { Animated, Easing, StyleSheet, View, Text, Image, Pressable } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { storageGet } from './Storage'
-import LoadFont from './Fonts'
+import LottieView from 'lottie-react-native'
+
 import OnlineStatus from './OnlineStatus'
 
 // load our assets
-const wassup_logo = require('./../assets/images/wassup_logo.png')
 import SVGBackground from './backgrounds/SVGbackground'
 
 const Home = props => {
@@ -15,7 +15,7 @@ const Home = props => {
   const [username, setUsername] = useState('')
   const [isConnected, setIsConnected] = useState('')
   const [appBG, setAppBG] = useState('') // << set up our initial BG state value
-  LoadFont()
+  const [anim, setAnim] = useState(new Animated.Value(0))
 
   const getOnlineStatus = async () => {
     try {
@@ -33,7 +33,17 @@ const Home = props => {
     setAppBG(appBGStored === '' ? 'SVGChat1' : appBGStored)
   }
 
+  const startFadeIn = () => {
+    Animated.timing(anim, {
+      toValue: 1,
+      duration: 500,
+      delay: 1500,
+      useNativeDriver: true,
+    }).start()
+  }
+
   useEffect(() => {
+    startFadeIn()
     fetchUserData()
     getOnlineStatus()
   }, [])
@@ -45,10 +55,10 @@ const Home = props => {
     <View style={styles.container}>
       <SVGBackground style={styles.bgimage} />
       <View style={styles.app_header_section}>
-        <Image source={wassup_logo} style={styles.logo} />
+        <LottieView source={require('./../assets/json/animated_logo.json')} autoPlay loop={false} />
       </View>
 
-      <View style={styles.call_to_action}>
+      <Animated.View style={[styles.call_to_action, { opacity: anim }]}>
         {/* Welcome text and Text Input to prompt user to enter a name and go to the chat */}
         <View style={{ width: '100%' }}>
           <Text style={styles.regular_text}>Type in your chat name</Text>
@@ -116,7 +126,7 @@ const Home = props => {
           {/* Customise button text for offline message */}
           <Text style={styles.start_button_text}>{isConnected ? 'START CHATTING' : 'Get Chat History'}</Text>
         </Pressable>
-      </View>
+      </Animated.View>
     </View>
   )
 }
@@ -133,24 +143,18 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  logo: {
-    width: 306,
-    height: 165,
-    marginTop: 100,
-  },
 
   regular_text: {
     fontSize: 20,
     fontWeight: '600',
     color: '#000',
     textAlign: 'center',
-    fontFamily: 'Poppins',
   },
 
   app_header_section: {
     flex: 0.6,
     justifyContent: 'top',
-    top: 100,
+    top: 50,
     alignItems: 'center',
   },
 
@@ -179,7 +183,6 @@ const styles = StyleSheet.create({
     color: '#757083',
     borderWidth: 1,
     padding: 10,
-    fontFamily: 'Poppins',
   },
   icon: {
     marginLeft: 20,
@@ -237,6 +240,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'Poppins',
   },
 })

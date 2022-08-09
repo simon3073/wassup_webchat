@@ -4,8 +4,7 @@ const OnlineStatus = async () => {
   // function to return online status
   try {
     return await NetInfo.fetch().then(connection => {
-      return false
-      //connection.isConnected
+      return connection.isConnected
     })
   } catch (error) {
     console.error(error)
