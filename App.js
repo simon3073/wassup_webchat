@@ -5,6 +5,7 @@ import LottieView from 'lottie-react-native'
 import 'react-native-gesture-handler'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import OnlineStatus from './components/OnlineStatus'
 
 // Import access to the database
 import firebase from './database/firebaseDB'
@@ -19,9 +20,13 @@ import SVGBackground from './components/backgrounds/SVGbackground'
 const Stack = createStackNavigator()
 
 const WassupApp = () => {
-  const [uid, setUid] = useState('') // set uid as the state to determine loading vis
-  useEffect(() => {
-    // authorise our use on initial visit
+  const [uid, setUid] = useState('') // set uid as the state to determine loading visibility
+  // set isConnected as the state so as to decide whether to
+  // authorise user and to pass to the other screens
+  const [isConnected, setIsConnected] = useState('')
+
+  // authorise user function
+  const authUser = () => {
     const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
       try {
         if (!user) {
@@ -35,6 +40,20 @@ const WassupApp = () => {
     return () => {
       authUnsubscribe()
     }
+  }
+
+  const getOnlineStatus = async () => {
+    try {
+      let getStatus = await OnlineStatus()
+      setIsConnected(getStatus)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getOnlineStatus()
+    isConnected ? authUser() : setUid(1)
   }, [])
 
   return !uid ? (
@@ -79,6 +98,5 @@ const styles = StyleSheet.create({
     color: '#0082af',
     marginTop: 220,
     fontWeight: '600',
-    // fontFamily: 'Poppins_400Regular',
   },
 })

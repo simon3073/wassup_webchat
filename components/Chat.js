@@ -1,6 +1,8 @@
 import React, { useLayoutEffect, useState, useCallback } from 'react'
 import { View, Text, Platform, KeyboardAvoidingView, StyleSheet } from 'react-native'
 import { GiftedChat, Day, InputToolbar } from 'react-native-gifted-chat'
+import { storageGet, storageSet, storageDelete } from './Storage'
+import OnlineStatus from './OnlineStatus'
 
 // import firebase access
 import firebase from './../database/firebaseDB'
@@ -16,40 +18,46 @@ import SVGChat4 from './backgrounds/SVGChat4'
 const Chat = props => {
   // set variables for users name and their app bg choice
   const { username, appBG, userid } = props.route.params
+  const [isConnected, setIsConnected] = useState('')
   const [messages, setMessages] = useState([])
+
+  // get the online status
+  const getOnlineStatus = async () => {
+    try {
+      let getStatus = await OnlineStatus()
+      setIsConnected(getStatus)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // on load set the title bar and change message state for the system and app initial messages
   useLayoutEffect(() => {
+    // save the username and background for future visits
+    storageSet('username', username || '')
+    storageSet('appBG', appBG)
     props.navigation.setOptions({ title: username }) // set title to username
-    if (messages.length === 0) {
-      // if we are new to the page set some welcome messages
-      setMessages([
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-        {
-          _id: 2,
-          text: `${username} has entered the chat`,
-          createdAt: new Date(),
-          system: true,
-        },
-      ])
-    }
-
-    // set up db snapshot listener
-    const queryMessages = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
-    const unsubscribe = onSnapshot(queryMessages, snapshot => {
-      msgCollectionUpdate(snapshot.docs)
-    })
-    return () => {
-      unsubscribe()
+    getOnlineStatus()
+    if (isConnected) {
+      // if we are online, set up db snapshot listener
+      const queryMessages = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
+      const unsubscribe = onSnapshot(queryMessages, snapshot => {
+        msgCollectionUpdate(snapshot.docs)
+      })
+      return () => {
+        unsubscribe()
+      }
+    } else {
+      // if we are offline, retrieve messages data from local storage and display
+      const getOfflineMessages = async () => {
+        try {
+          const localMessages = await storageGet('messages')
+          setMessages(JSON.parse(localMessages))
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      getOfflineMessages()
     }
   }, [])
 
@@ -83,11 +91,14 @@ const Chat = props => {
       })
     })
     setMessages(previousMessages => GiftedChat.append(previousMessages.message, dbMessages))
+    storageSet('messages', JSON.stringify(dbMessages))
   }, [])
 
   // add new message to the firestore db - eliciting a snapshot and state change
   const onSend = useCallback((message = []) => {
-    if (message.length) addDoc(collection(db, 'messages'), message[0])
+    if (message.length) {
+      addDoc(collection(db, 'messages'), message[0])
+    }
   }, [])
 
   // Custom styling for Chat elements
@@ -106,8 +117,9 @@ const Chat = props => {
     )
   }
 
+  // Only show input toolbar is online
   const renderInputToolbar = props => {
-    return <InputToolbar {...props} containerStyle={styles.input} />
+    return isConnected && <InputToolbar {...props} containerStyle={styles.input} />
   }
 
   return (
@@ -149,8 +161,8 @@ const styles = StyleSheet.create({
   },
   bgimage3_4: {
     position: 'absolute',
-    width: '140%',
-    height: '140%',
+    width: '145%',
+    height: '145%',
   },
   input: {
     borderRadius: 30,
