@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 import 'react-native-gesture-handler'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import NetInfo from '@react-native-community/netinfo'
+import OnlineStatus from './components/OnlineStatus'
 
 // Import access to the database
 import firebase from './database/firebaseDB'
@@ -21,17 +21,9 @@ const Stack = createStackNavigator()
 
 const WassupApp = () => {
   const [uid, setUid] = useState('') // set uid as the state to determine loading visibility
-
   // set isConnected as the state so as to decide whether to
   // authorise user and to pass to the other screens
-  const [isConnected, setIsConnected] = useState(null)
-
-  // function to return online status
-  const onlineStatus = () => {
-    NetInfo.fetch().then(state => {
-      return state.isConnected
-    })
-  }
+  const [isConnected, setIsConnected] = useState('')
 
   // authorise user function
   const authUser = () => {
@@ -50,12 +42,18 @@ const WassupApp = () => {
     }
   }
 
+  const getOnlineStatus = async () => {
+    try {
+      let getStatus = await OnlineStatus()
+      setIsConnected(getStatus)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    // Check our user online status on load > run authorisation if so, setUid ton dummy value to load pages otherwise
-    NetInfo.fetch().then(state => {
-      setIsConnected(state.isConnected)
-      !state.isConnected ? authUser() : setUid(1)
-    })
+    getOnlineStatus()
+    isConnected ? authUser() : setUid(1)
   }, [])
 
   return !uid ? (
@@ -70,7 +68,7 @@ const WassupApp = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
         <Stack.Screen name='Home' options={{ headerShown: false }}>
-          {props => <Home {...props} uid={uid} online={isConnected} />}
+          {props => <Home {...props} uid={uid} />}
         </Stack.Screen>
         <Stack.Screen name='Chat' component={Chat} />
       </Stack.Navigator>
@@ -100,6 +98,5 @@ const styles = StyleSheet.create({
     color: '#0082af',
     marginTop: 220,
     fontWeight: '600',
-    // fontFamily: 'Poppins_400Regular',
   },
 })

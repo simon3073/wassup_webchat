@@ -3,25 +3,39 @@ import { StyleSheet, View, Text, Image, Pressable } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { storageGet } from './Storage'
+import LoadFont from './Fonts'
+import OnlineStatus from './OnlineStatus'
 
 // load our assets
 const wassup_logo = require('./../assets/images/wassup_logo.png')
 import SVGBackground from './backgrounds/SVGbackground'
 
 const Home = props => {
-  const { uid, online } = props
+  const { uid } = props
   const [username, setUsername] = useState('')
+  const [isConnected, setIsConnected] = useState('')
   const [appBG, setAppBG] = useState('') // << set up our initial BG state value
+  LoadFont()
+
+  const getOnlineStatus = async () => {
+    try {
+      let getStatus = await OnlineStatus()
+      setIsConnected(getStatus)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  // retrieve user data from local storage
+  const fetchUserData = async () => {
+    let usernameStored = await storageGet('username')
+    setUsername(usernameStored)
+    let appBGStored = await storageGet('appBG')
+    setAppBG(appBGStored === '' ? 'SVGChat1' : appBGStored)
+  }
 
   useEffect(() => {
-    // retrieve user data from local storage
-    const fetchUserData = async () => {
-      let usernameStored = await storageGet('username')
-      setUsername(usernameStored)
-      let appBGStored = await storageGet('appBG')
-      setAppBG(appBGStored === '' ? 'SVGChat1' : appBGStored)
-    }
     fetchUserData()
+    getOnlineStatus()
   }, [])
 
   // function to check if bg is currently set -- for display purposes of BG selector
@@ -80,7 +94,7 @@ const Home = props => {
         </View>
 
         {/* Offline notification */}
-        {!online && (
+        {!isConnected && (
           <View style={{ alignItems: 'center', width: '100%' }}>
             <Text style={{ color: 'darkred', fontWeight: 'bold', fontSize: 18, fontStyle: 'italic' }}>
               You are currently offline
@@ -96,12 +110,11 @@ const Home = props => {
               username: username,
               appBG: appBG,
               userid: uid,
-              online: online,
             })
           }
         >
           {/* Customise button text for offline message */}
-          <Text style={styles.start_button_text}>{online ? 'START CHATTING' : 'Get Chat History'}</Text>
+          <Text style={styles.start_button_text}>{isConnected ? 'START CHATTING' : 'Get Chat History'}</Text>
         </Pressable>
       </View>
     </View>
@@ -131,7 +144,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     textAlign: 'center',
-    // fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Poppins',
   },
 
   app_header_section: {
@@ -166,6 +179,7 @@ const styles = StyleSheet.create({
     color: '#757083',
     borderWidth: 1,
     padding: 10,
+    fontFamily: 'Poppins',
   },
   icon: {
     marginLeft: 20,
@@ -223,6 +237,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-    // fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Poppins',
   },
 })

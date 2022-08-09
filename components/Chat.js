@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useState, useCallback } from 'react'
 import { View, Text, Platform, KeyboardAvoidingView, StyleSheet } from 'react-native'
 import { GiftedChat, Day, InputToolbar } from 'react-native-gifted-chat'
 import { storageGet, storageSet, storageDelete } from './Storage'
+import OnlineStatus from './OnlineStatus'
 
 // import firebase access
 import firebase from './../database/firebaseDB'
@@ -16,8 +17,19 @@ import SVGChat4 from './backgrounds/SVGChat4'
 
 const Chat = props => {
   // set variables for users name and their app bg choice
-  const { username, appBG, userid, online } = props.route.params
+  const { username, appBG, userid } = props.route.params
+  const [isConnected, setIsConnected] = useState('')
   const [messages, setMessages] = useState([])
+
+  // get the online status
+  const getOnlineStatus = async () => {
+    try {
+      let getStatus = await OnlineStatus()
+      setIsConnected(getStatus)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // on load set the title bar and change message state for the system and app initial messages
   useLayoutEffect(() => {
@@ -25,8 +37,8 @@ const Chat = props => {
     storageSet('username', username || '')
     storageSet('appBG', appBG)
     props.navigation.setOptions({ title: username }) // set title to username
-
-    if (online) {
+    getOnlineStatus()
+    if (isConnected) {
       // if we are online, set up db snapshot listener
       const queryMessages = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
       const unsubscribe = onSnapshot(queryMessages, snapshot => {
@@ -107,7 +119,7 @@ const Chat = props => {
 
   // Only show input toolbar is online
   const renderInputToolbar = props => {
-    return online && <InputToolbar {...props} containerStyle={styles.input} />
+    return isConnected && <InputToolbar {...props} containerStyle={styles.input} />
   }
 
   return (
