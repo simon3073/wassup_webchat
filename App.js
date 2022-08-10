@@ -60,7 +60,13 @@ const WassupApp = () => {
     // If we are waiting to be authourised >> show the loader
     <View style={styles.container}>
       <SVGBackground style={styles.bgimage} />
-      <LottieView source={require('./assets/json/loading.json')} autoPlay />
+      <LottieView
+        source={require('./assets/json/loading.json')}
+        height={300}
+        left={50}
+        style={{ marginTop: 80 }}
+        autoPlay
+      />
       <Text style={styles.loadingText}>...loading the Wassup!?!</Text>
     </View>
   ) : (
