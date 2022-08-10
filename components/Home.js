@@ -16,6 +16,7 @@ const Home = props => {
   const [isConnected, setIsConnected] = useState('')
   const [appBG, setAppBG] = useState('') // << set up our initial BG state value
   const [anim, setAnim] = useState(new Animated.Value(0))
+  const animation = useRef(null)
 
   const getOnlineStatus = async () => {
     try {
@@ -43,6 +44,7 @@ const Home = props => {
   }
 
   useEffect(() => {
+    animation.current?.play()
     startFadeIn()
     fetchUserData()
     getOnlineStatus()
@@ -55,7 +57,7 @@ const Home = props => {
     <View style={styles.container}>
       <SVGBackground style={styles.bgimage} />
       <View style={styles.app_header_section}>
-        <LottieView source={require('./../assets/json/animated_logo.json')} autoPlay loop={false} />
+        <LottieView ref={animation} source={require('./../assets/json/animated_logo.json')} autoPlay loop={false} />
       </View>
 
       <Animated.View style={[styles.call_to_action, { opacity: anim }]}>

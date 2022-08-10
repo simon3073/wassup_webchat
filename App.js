@@ -1,5 +1,5 @@
 // import the necessary packages to allow navigation in React-Native
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import LottieView from 'lottie-react-native'
 import 'react-native-gesture-handler'
@@ -24,6 +24,7 @@ const WassupApp = () => {
   // set isConnected as the state so as to decide whether to
   // authorise user and to pass to the other screens
   const [isConnected, setIsConnected] = useState('')
+  const animation = useRef(null)
 
   // authorise user function
   const authUser = () => {
@@ -53,6 +54,7 @@ const WassupApp = () => {
 
   useEffect(() => {
     getOnlineStatus()
+    animation.current.play()
     isConnected ? authUser() : setUid(1)
   }, [])
 
@@ -61,6 +63,7 @@ const WassupApp = () => {
     <View style={styles.container}>
       <SVGBackground style={styles.bgimage} />
       <LottieView
+        ref={animation}
         source={require('./assets/json/loading.json')}
         height={300}
         left={50}
@@ -102,7 +105,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: '#0082af',
-    marginTop: 220,
+    marginTop: 240,
     fontWeight: '600',
+    fontSize: 18,
   },
 })
