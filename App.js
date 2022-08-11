@@ -3,9 +3,13 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import LottieView from 'lottie-react-native'
 import 'react-native-gesture-handler'
+
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import OnlineStatus from './components/OnlineStatus'
+const Stack = createStackNavigator()
+
+// import function to check net status
+import OnlineStatus from './components/hooks/OnlineStatus'
 
 // Import access to the database
 import firebase from './database/firebaseDB'
@@ -17,13 +21,13 @@ import Chat from './components/Chat'
 // import assets
 import SVGBackground from './components/backgrounds/SVGbackground'
 
-const Stack = createStackNavigator()
-
 const WassupApp = () => {
   const [uid, setUid] = useState('') // set uid as the state to determine loading visibility
-  // set isConnected as the state so as to decide whether to
+  // set isConnected as the state so as to decide whether to...
   // authorise user and to pass to the other screens
   const [isConnected, setIsConnected] = useState('')
+
+  // for animating lottie logo
   const animation = useRef(null)
 
   // authorise user function
@@ -34,6 +38,7 @@ const WassupApp = () => {
           await firebase.auth().signInAnonymously()
         }
         setUid(user.uid)
+        console.log('🚀 ~ file: App.js ~ line 41 ~ authUnsubscribe ~ user.uid', user.uid)
       } catch (err) {
         console.log(err)
       }
@@ -43,6 +48,7 @@ const WassupApp = () => {
     }
   }
 
+  // check internet connection and set state accordingly
   const getOnlineStatus = async () => {
     try {
       let getStatus = await OnlineStatus()
@@ -53,6 +59,7 @@ const WassupApp = () => {
   }
 
   useEffect(() => {
+    // check internet status, play logo animation and set up next steps
     getOnlineStatus()
     animation.current.play()
     isConnected ? authUser() : setUid(1)

@@ -2,22 +2,30 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Animated, Easing, StyleSheet, View, Text, Image, Pressable } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { storageGet } from './Storage'
 import LottieView from 'lottie-react-native'
 
-import OnlineStatus from './OnlineStatus'
+// import storage functions
+import { storageGet } from './hooks/Storage'
+
+// import function to check net status
+import OnlineStatus from './hooks/OnlineStatus'
 
 // load our assets
 import SVGBackground from './backgrounds/SVGbackground'
 
 const Home = props => {
-  const { uid } = props
+  const { uid } = props // pass userid from App.js
   const [username, setUsername] = useState('')
+
+  // set isConnected as the state so as to decide whether to...
+  // authorise user and to pass to the other screens
   const [isConnected, setIsConnected] = useState('')
-  const [appBG, setAppBG] = useState('') // << set up our initial BG state value
-  const [anim, setAnim] = useState(new Animated.Value(0))
+  const [appBG, setAppBG] = useState('') // set up our initial BG state value
+  const [anim, setAnim] = useState(new Animated.Value(0)) // state to animate in View following lottie logo animation
+  // for animating lottie loader
   const animation = useRef(null)
 
+  // check internet connection and set state accordingly
   const getOnlineStatus = async () => {
     try {
       let getStatus = await OnlineStatus()
@@ -26,14 +34,21 @@ const Home = props => {
       console.log(error)
     }
   }
+
   // retrieve user data from local storage
   const fetchUserData = async () => {
-    let usernameStored = await storageGet('username')
-    setUsername(usernameStored)
-    let appBGStored = await storageGet('appBG')
-    setAppBG(appBGStored === '' ? 'SVGChat1' : appBGStored)
+    try {
+      let usernameStored = await storageGet('username')
+      setUsername(usernameStored)
+      let appBGStored = await storageGet('appBG')
+      setAppBG(appBGStored === '' ? 'SVGChat1' : appBGStored)
+    } catch (error) {
+      // console.log(error)
+      alert('You appear to not have internet coverage, but you still have access to your chat history')
+    }
   }
 
+  // object to fade in View after logon animation
   const startFadeIn = () => {
     Animated.timing(anim, {
       toValue: 1,
@@ -44,7 +59,8 @@ const Home = props => {
   }
 
   useEffect(() => {
-    animation.current?.play()
+    // set up the home page
+    animation.current.play()
     startFadeIn()
     fetchUserData()
     getOnlineStatus()
@@ -78,24 +94,36 @@ const Home = props => {
             <Text style={styles.regular_text}>Choose your background style</Text>
             <View style={styles.backgroundEl}>
               <TouchableOpacity
+                accessible={true}
+                accessibilityLabel='Choose a chat background'
+                accessibilityHint='Choose this purple background for your chat.'
                 onPress={() => setAppBG('SVGChat1')}
                 style={[styles.colour_option_shape_cover, isSetBG('SVGChat1')]}
               >
                 <Image source={require('./../assets/images/SVGChat1.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
               <TouchableOpacity
+                accessible={true}
+                accessibilityLabel='Choose a chat background'
+                accessibilityHint='Choose this radial background for your chat.'
                 onPress={() => setAppBG('SVGChat2')}
                 style={[styles.colour_option_shape_cover, isSetBG('SVGChat2')]}
               >
                 <Image source={require('./../assets/images/SVGChat2.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
               <TouchableOpacity
+                accessible={true}
+                accessibilityLabel='Choose a chat background'
+                accessibilityHint='Choose this pink pattern background for your chat.'
                 onPress={() => setAppBG('SVGChat3')}
                 style={[styles.colour_option_shape_cover, isSetBG('SVGChat3')]}
               >
                 <Image source={require('./../assets/images/SVGChat3.png')} style={styles.colour_option_shape} />
               </TouchableOpacity>
               <TouchableOpacity
+                accessible={true}
+                accessibilityLabel='Choose a chat background'
+                accessibilityHint='Choose this mountain landscape background for your chat.'
                 onPress={() => setAppBG('SVGChat4')}
                 style={[styles.colour_option_shape_cover, isSetBG('SVGChat4')]}
               >
