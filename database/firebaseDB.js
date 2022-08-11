@@ -1,5 +1,6 @@
 // Database connection
 import firebase from 'firebase/compat/app'
+import auth from 'firebase/compat/auth'
 import firestore from 'firebase/compat/firestore'
 import { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, measurementId } from '@env'
 

@@ -60,9 +60,23 @@ const WassupApp = () => {
 
   useEffect(() => {
     // check internet status, play logo animation and set up next steps
-    getOnlineStatus()
+    //getOnlineStatus()
     animation.current.play()
-    isConnected ? authUser() : setUid(1)
+    // isConnected ? authUser() : setUid(1)
+    const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
+      try {
+        if (!user) {
+          await firebase.auth().signInAnonymously()
+        }
+        setUid(user.uid)
+        console.log('🚀 ~ file: App.js ~ line 41 ~ authUnsubscribe ~ user.uid', user.uid)
+      } catch (err) {
+        console.log(err)
+      }
+    })
+    return () => {
+      authUnsubscribe()
+    }
   }, [])
 
   return !uid ? (

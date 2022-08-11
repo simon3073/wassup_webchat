@@ -13,31 +13,35 @@ const CustomActions = props => {
 
   // construct message or the DB with an image value
   const sendImage = imageURL => {
-    onSend({
-      _id: uuidv4(), // use a randomly generated id
-      createdAt: new Date(),
-      user: {
-        _id: user._id,
-        name: user.name,
+    onSend([
+      {
+        _id: uuidv4(), // use a randomly generated id
+        createdAt: new Date(),
+        user: {
+          _id: user._id,
+          name: user.name,
+        },
+        image: imageURL,
       },
-      image: imageURL,
-    })
+    ])
   }
 
   // construct message or the DB with location values
   const sendLocation = ({ coords }) => {
-    onSend({
-      _id: uuidv4(),
-      createdAt: new Date(),
-      user: {
-        _id: user._id,
-        name: user.name,
+    onSend([
+      {
+        _id: uuidv4(),
+        createdAt: new Date(),
+        user: {
+          _id: user._id,
+          name: user.name,
+        },
+        location: {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        },
       },
-      location: {
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-      },
-    })
+    ])
   }
 
   // on selecting the + icon in the input bar...
