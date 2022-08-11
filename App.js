@@ -30,37 +30,8 @@ const WassupApp = () => {
   // for animating lottie logo
   const animation = useRef(null)
 
-  // authorise user function
-  const authUser = () => {
-    const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
-      try {
-        if (!user) {
-          await firebase.auth().signInAnonymously()
-        }
-        setUid(user.uid)
-        console.log('🚀 ~ file: App.js ~ line 41 ~ authUnsubscribe ~ user.uid', user.uid)
-      } catch (err) {
-        console.log(err)
-      }
-    })
-    return () => {
-      authUnsubscribe()
-    }
-  }
-
-  // check internet connection and set state accordingly
-  const getOnlineStatus = async () => {
-    try {
-      let getStatus = await OnlineStatus()
-      setIsConnected(getStatus)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   useEffect(() => {
-    // check internet status, play logo animation and set up next steps
-    //getOnlineStatus()
+    // play loading animation and authorise user
     animation.current.play()
     // isConnected ? authUser() : setUid(1)
     const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
@@ -69,9 +40,9 @@ const WassupApp = () => {
           await firebase.auth().signInAnonymously()
         }
         setUid(user.uid)
-        console.log('🚀 ~ file: App.js ~ line 41 ~ authUnsubscribe ~ user.uid', user.uid)
       } catch (err) {
-        console.log(err)
+        setUid(1)
+        console.error(err)
       }
     })
     return () => {

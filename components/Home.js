@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, StyleSheet, View, Text, Image, Pressable } from 'react-native'
+import { Animated, StyleSheet, View, Text, Image, Pressable } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import LottieView from 'lottie-react-native'

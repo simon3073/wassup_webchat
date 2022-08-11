@@ -24,7 +24,6 @@ import SVGChat4 from './backgrounds/SVGChat4'
 const Chat = props => {
   // set variables for users name and their app bg choice
   const { username, appBG, userid } = props.route.params
-  console.log('🚀 ~ file: Chat.js ~ line 27 ~ userid', userid)
 
   // set isConnected as the state so as to decide whether to...
   // authorise user and to pass to the other screens
@@ -113,7 +112,6 @@ const Chat = props => {
 
   // add new message to the firestore db - eliciting a snapshot and state change
   const onSend = useCallback((message = []) => {
-    console.log('🚀 ~ file: Chat.js ~ line 116 ~ onSend ~ message', message)
     addDoc(collection(db, 'messages'), message[0])
   }, [])
 

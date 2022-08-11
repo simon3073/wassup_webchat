@@ -30,7 +30,7 @@ const CustomActions = props => {
   const sendLocation = ({ coords }) => {
     onSend([
       {
-        _id: uuidv4(),
+        _id: uuidv4(), // use a randomly generated id
         createdAt: new Date(),
         user: {
           _id: user._id,
@@ -47,7 +47,7 @@ const CustomActions = props => {
   // on selecting the + icon in the input bar...
   // load the ActionSheet, populate and listen for clicks
   const onActionPress = () => {
-    const options = ['Choose Image from Library', 'Take a Picture', 'Send Location', 'Record Audio Message', 'Cancel']
+    const options = ['Choose Image from Library', 'Take a Picture', 'Send Location', 'Cancel']
     const cancelButtonIndex = options.length - 1
     ActionSheetIOS.showActionSheetWithOptions(
       {
@@ -67,9 +67,6 @@ const CustomActions = props => {
           case 2:
             const mapResult = await getLocation() // call function to retrieve current location
             sendLocation(mapResult) // construct message for GiftedChat
-            return
-          case 3:
-            console.log('audio')
             return
           default:
         }
