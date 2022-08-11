@@ -22,7 +22,7 @@ import Chat from './components/Chat'
 import SVGBackground from './components/backgrounds/SVGbackground'
 
 const WassupApp = () => {
-  const [uid, setUid] = useState('') // set uid as the state to determine loading visibility
+  const [uid, setUid] = useState(null) // set uid as the state to determine loading visibility
   // set isConnected as the state so as to decide whether to...
   // authorise user and to pass to the other screens
   const [isConnected, setIsConnected] = useState('')
@@ -36,13 +36,12 @@ const WassupApp = () => {
     // isConnected ? authUser() : setUid(1)
     const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
       try {
-        if (!user) {
+        if (!user || user === null) {
           await firebase.auth().signInAnonymously()
         }
         setUid(user.uid)
       } catch (err) {
-        setUid(1)
-        console.error(err)
+        // console.error(err)
       }
     })
     return () => {
