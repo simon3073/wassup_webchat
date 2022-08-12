@@ -1,7 +1,20 @@
 # **Wassup! Mobile Chat App**
 
+<img src="https://res.cloudinary.com/ds9nzjduw/image/upload/c_scale,w_985/v1660265880/CareeerFoundry%20Cuourse/Screen_Shot_2022-08-12_at_10.57.10_am_l0fa7l.png">
+
 A mobile chat app built using React Native. It provide users with a chat interface and options to share images and their location.
 <br />
+<br>
+
+## **User Stories**
+
+- As a new user, I want to be able to easily enter a chat room so I can quickly start talking to my friends and family.
+- As a user, I want to be able to send messages to my friends and family members to exchange the latest news.
+- As a user, I want to send images to my friends to show them what I’m currently doing.
+- As a user, I want to share my location with my friends to show them where I am.
+- As a user, I want to be able to read my messages offline so I can reread conversations at any time.
+- As a user with a visual impairment, I want to use a chat app that is compatible with a screen reader so that I can engage with a chat interface.
+  <br></br>
 
 ---
 
@@ -14,12 +27,14 @@ A mobile chat app built using React Native. It provide users with a chat interfa
 - Javascript
 - Firebase
 - Gifted Chat
+- React-Lottie LottieIOS
+- UUID
 
 <br/>
 
 ## **Key Features**
 
-- A page where users can enter their name and choose a background color for the chat screen before joining the chat.
+- A page where users can enter their name and choose a background pattern for the chat screen before joining the chat.
 - A page displaying the conversation, as well as an input field and submit button.
 - The chat must provide users with two additional communication features: sending images and location data.
 - Data gets stored online and offline.
@@ -45,43 +60,68 @@ A mobile chat app built using React Native. It provide users with a chat interfa
 - Node.js and npm
 - Android Studio or Xcode for iOS
 - Expo
+- Firebase
 
 <br>
 
-### Getting Started
+### Getting **Started**<br>
 
-1. Clone repo
+1. Install <a href="https://expo.io/">Expo:</a>
+
+```bash
+npm install expo-cli --global
+```
+
+2. Download the Expo App to your Device
+3. Create an Expo account <a href="https://expo.io/signup">here</a>
+4. Install Simulator for <a href="https://developer.apple.com/xcode/">MAC</a> or <a href="https://developer.android.com/studio">Android</a>
+5. Clone repo
 
 ```bash
 git clone https://github.com/simon3073/wassup_webchat.git
 ```
 
-2.  Navigate to root folder via CLI
-3.  Install required packages in package.json
-4.  Run app locally
+6.  Navigate to root folder via CLI
+7.  Install required packages in package.json
 
 ```bash
-expo start
+npm i
 ```
 
-4. Select an option to view (Web, iOS/Android Emulator, or QR Code to use on Expo App)
-5. Deploy on GitHub Pages
+8.  Run app locally
 
 ```bash
-npm run deploy
+npm start
 ```
 
-<br/>
-<br/>
+9. Select an option to view (Web, iOS/Android Emulator, or QR Code to use on Expo App)
 
-## **User Stories**
+<br>
 
-- As a new user, I want to be able to easily enter a chat room so I can quickly start talking to my friends and family.
-- As a user, I want to be able to send messages to my friends and family members to exchange the latest news.
-- As a user, I want to send images to my friends to show them what I’m currently doing.
-- As a user, I want to share my location with my friends to show them where I am.
-- As a user, I want to be able to read my messages offline so I can reread conversations at any time.
-- As a user with a visual impairment, I want to use a chat app that is compatible with a screen reader so that I can engage with a chat interface.
+**Setting up and Connecting to a Firebase Database**
+
+1. Sign in to <a href="https://console.firebase.google.com/">Google Firebase</a> and select 'Add Project'
+2. Once you have set up a new project, select **Firebase Database** from the options on the left under 'Build'
+3. Select 'Start in Test Mode' (you dont have to specify rules yet), choose a region, then create a collection called 'messages'
+   <img src="https://res.cloudinary.com/ds9nzjduw/image/upload/c_scale,w_673/v1660265182/CareeerFoundry%20Cuourse/firebase_messages_jzpvej.png">
+4. To set up your authentication, go to Project Settings (the gear icon top-left of screen and then select the </> icon under Your apps
+   <img src="https://res.cloudinary.com/ds9nzjduw/image/upload/c_scale,w_693/v1660265182/CareeerFoundry%20Cuourse/project_settings_nmjvtr.png">
+5. Click Register to generate the configuration code
+
+   <img src="https://res.cloudinary.com/ds9nzjduw/image/upload/c_scale,w_610/v1660265182/CareeerFoundry%20Cuourse/firestore_sdk_configuration_s1c33b.jpg">
+
+6. Add this code to the firebaseDB.js file (replace the existing code)<br>
+   _please note you will want to eventually add these values to an env file which is added to gitignore_
+
+<br>
+Setting up firebase Storage (for Images)
+
+1. Sign in to <a href="https://console.firebase.google.com/">Google Firebase</a>
+2. Select **Storage** from the options on the left under 'Build'
+3. Click the Get Started button. This will open a popup asking you to set your cloud storage.
+4. Keep everything on default and press Next, then Done.
+
+<br/>
 
 <br/>
 
