@@ -1,8 +1,7 @@
-// database/firebaseDb.js
+// Database connection
 import firebase from 'firebase/compat/app'
 import auth from 'firebase/compat/auth'
 import firestore from 'firebase/compat/firestore'
-
 import { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, measurementId } from '@env'
 
 const firebaseConfig = {
@@ -15,6 +14,6 @@ const firebaseConfig = {
   measurementId: measurementId,
 }
 
-firebase.initializeApp(firebaseConfig)
+const app = firebase.initializeApp(firebaseConfig)
 firebase.firestore()
 export default firebase

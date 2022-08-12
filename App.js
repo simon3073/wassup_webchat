@@ -1,11 +1,15 @@
 // import the necessary packages to allow navigation in React-Native
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import LottieView from 'lottie-react-native'
 import 'react-native-gesture-handler'
+
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import OnlineStatus from './components/OnlineStatus'
+const Stack = createStackNavigator()
+
+// import function to check net status
+import OnlineStatus from './components/hooks/OnlineStatus'
 
 // Import access to the database
 import firebase from './database/firebaseDB'
@@ -17,43 +21,32 @@ import Chat from './components/Chat'
 // import assets
 import SVGBackground from './components/backgrounds/SVGbackground'
 
-const Stack = createStackNavigator()
-
 const WassupApp = () => {
-  const [uid, setUid] = useState('') // set uid as the state to determine loading visibility
-  // set isConnected as the state so as to decide whether to
+  const [uid, setUid] = useState(null) // set uid as the state to determine loading visibility
+  // set isConnected as the state so as to decide whether to...
   // authorise user and to pass to the other screens
   const [isConnected, setIsConnected] = useState('')
 
-  // authorise user function
-  const authUser = () => {
+  // for animating lottie logo
+  const animation = useRef(null)
+
+  useEffect(() => {
+    // play loading animation and authorise user
+    animation.current.play()
+    // isConnected ? authUser() : setUid(1)
     const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
       try {
-        if (!user) {
+        if (!user || user === null) {
           await firebase.auth().signInAnonymously()
         }
         setUid(user.uid)
       } catch (err) {
-        console.log(err)
+        // console.error(err)
       }
     })
     return () => {
       authUnsubscribe()
     }
-  }
-
-  const getOnlineStatus = async () => {
-    try {
-      let getStatus = await OnlineStatus()
-      setIsConnected(getStatus)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    getOnlineStatus()
-    isConnected ? authUser() : setUid(1)
   }, [])
 
   return !uid ? (
@@ -61,6 +54,7 @@ const WassupApp = () => {
     <View style={styles.container}>
       <SVGBackground style={styles.bgimage} />
       <LottieView
+        ref={animation}
         source={require('./assets/json/loading.json')}
         height={300}
         left={50}
@@ -102,7 +96,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: '#0082af',
-    marginTop: 220,
+    marginTop: 240,
     fontWeight: '600',
+    fontSize: 18,
   },
 })

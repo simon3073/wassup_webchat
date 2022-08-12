@@ -1,15 +1,21 @@
 import React, { useLayoutEffect, useState, useCallback } from 'react'
 import { View, Text, Platform, KeyboardAvoidingView, StyleSheet } from 'react-native'
 import { GiftedChat, Day, InputToolbar } from 'react-native-gifted-chat'
-import { storageGet, storageSet, storageDelete } from './Storage'
-import OnlineStatus from './OnlineStatus'
+
+// storage functions
+import { storageGet, storageSet } from './hooks/Storage'
+
+// imports for adding images and locations
+import MapView from 'react-native-maps'
+import OnlineStatus from './hooks/OnlineStatus'
+import CustomActions from './CustomActions'
 
 // import firebase access
 import firebase from './../database/firebaseDB'
 import { getFirestore, collection, addDoc, onSnapshot, orderBy, query } from 'firebase/firestore'
 const db = getFirestore(Chat)
 
-// import assets
+// import SVG Background assets
 import SVGChat1 from './backgrounds/SVGChat1'
 import SVGChat2 from './backgrounds/SVGChat2'
 import SVGChat3 from './backgrounds/SVGChat3'
@@ -18,16 +24,20 @@ import SVGChat4 from './backgrounds/SVGChat4'
 const Chat = props => {
   // set variables for users name and their app bg choice
   const { username, appBG, userid } = props.route.params
+
+  // set isConnected as the state so as to decide whether to...
+  // authorise user and to pass to the other screens
   const [isConnected, setIsConnected] = useState('')
   const [messages, setMessages] = useState([])
 
-  // get the online status
+  // check internet connection and set state accordingly
   const getOnlineStatus = async () => {
     try {
       let getStatus = await OnlineStatus()
       setIsConnected(getStatus)
     } catch (error) {
-      console.log(error)
+      // console.log(error)
+      alert('You appear to not have internet coverage, but you still have access to your chat history')
     }
   }
 
@@ -37,6 +47,7 @@ const Chat = props => {
     storageSet('username', username || '')
     storageSet('appBG', appBG)
     props.navigation.setOptions({ title: username }) // set title to username
+
     getOnlineStatus()
     if (isConnected) {
       // if we are online, set up db snapshot listener
@@ -54,12 +65,13 @@ const Chat = props => {
           const localMessages = await storageGet('messages')
           setMessages(JSON.parse(localMessages))
         } catch (error) {
-          console.log(error)
+          //console.log(error)
+          alert('Sorry we cannot retrieve your messages. Please try again later')
         }
       }
       getOfflineMessages()
     }
-  }, [])
+  }, [isConnected])
 
   // return component to display based on user background selection
   const getChatBackground = () => {
@@ -80,6 +92,7 @@ const Chat = props => {
   // display all the message from the firestore db snapshot
   const msgCollectionUpdate = useCallback(querySnapshot => {
     const dbMessages = []
+
     // go through each document
     querySnapshot.forEach(doc => {
       var data = doc.data()
@@ -88,17 +101,18 @@ const Chat = props => {
         text: data.text,
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        image: data.image ? data.image : null,
+        location: data.location ? data.location : null,
       })
     })
+    // update state and save to local storage
     setMessages(previousMessages => GiftedChat.append(previousMessages.message, dbMessages))
     storageSet('messages', JSON.stringify(dbMessages))
   }, [])
 
   // add new message to the firestore db - eliciting a snapshot and state change
   const onSend = useCallback((message = []) => {
-    if (message.length) {
-      addDoc(collection(db, 'messages'), message[0])
-    }
+    addDoc(collection(db, 'messages'), message[0])
   }, [])
 
   // Custom styling for Chat elements
@@ -117,9 +131,32 @@ const Chat = props => {
     )
   }
 
-  // Only show input toolbar is online
+  const renderCustomActions = props => {
+    return <CustomActions {...props} onSend={onSend} />
+  }
+
+  // Only show input toolbar when online
   const renderInputToolbar = props => {
     return isConnected && <InputToolbar {...props} containerStyle={styles.input} />
+  }
+
+  // render the view for a chat message with location values
+  const renderCustomView = props => {
+    const { currentMessage } = props
+    if (currentMessage.location) {
+      return (
+        <MapView
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+        />
+      )
+    }
+    return null
   }
 
   return (
@@ -134,7 +171,9 @@ const Chat = props => {
         renderSystemMessage={customSystemMessage}
         renderDay={renderDay}
         renderUsernameOnMessage={true}
+        renderActions={renderCustomActions}
         renderInputToolbar={renderInputToolbar}
+        renderCustomView={renderCustomView}
         messages={messages}
         onSend={messages => onSend(messages)}
         user={{ _id: userid, name: username }}

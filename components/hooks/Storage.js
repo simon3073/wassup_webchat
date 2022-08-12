@@ -5,7 +5,7 @@ const storageSet = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, value)
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -14,7 +14,7 @@ const storageGet = async key => {
     const result = await AsyncStorage.getItem(key)
     return result
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -22,7 +22,7 @@ const storageDelete = async key => {
   try {
     await AsyncStorage.removeItem(key)
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }
 
